@@ -1,10 +1,5 @@
 .onLoad <- function(libname, pkgname) {
-  user_permission <- utils::askYesNo("Install miniconda?")
-  if (isTRUE(user_permission)) {
-    reticulate::install_miniconda(force = TRUE)
-  } else {
-    warning("You should run `reticulate::install_miniconda()` before using this package.")
-  }
+  reticulate::install_miniconda(force = TRUE)
   if (!("spaco" %in% reticulate::conda_list()$name)) {
     reticulate::conda_install(envname = "spaco",
                               packages = c("numpy", "tensorly", "scikit-learn"))
