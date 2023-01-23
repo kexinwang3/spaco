@@ -32,10 +32,3 @@ def cutfoldid_py(n, nfolds, random_state):
       train_ids.append(train_index.copy())
       test_ids.append(test_index.copy())
   return train_ids, test_ids
-
-def sort_py(Ximmune_patient, normalization):
-  X_return = Ximmune_patient.copy()
-  for j in np.arange(Ximmune_patient.shape[1]):
-    x = Ximmune_patient[:, j]
-    X_return[:, j] = normalization[np.argsort(np.argsort(x))]
-  return X_return

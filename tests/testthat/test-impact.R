@@ -4,6 +4,7 @@
 
 test_that(
   "The impact_data_wrangling() returns a list.", {
+    skip_if_no_modules()
     data("impact_imputed")
     data("impact_missing")
     impact <- impact_data_wrangling(impact_missing, impact_imputed)
@@ -17,6 +18,7 @@ test_that(
 
 test_that(
   "The impact_predict() returns a list.", {
+    skip_if_no_modules()
     data("impact_imputed")
     data("impact_missing")
     impact <- impact_data_wrangling(impact_missing, impact_imputed)
@@ -37,6 +39,7 @@ test_that(
 
 test_that(
   "The impact_plot() runs without errors.", {
+    skip_if_no_modules()
     data("impact_imputed")
     data("impact_missing")
     impact <- impact_data_wrangling(impact_missing, impact_imputed)

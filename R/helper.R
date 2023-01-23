@@ -284,3 +284,21 @@ subject_cv_mean <- function(X, Psi, O1, s0, Omega, lams) {
   cv_mean <- multi_return()
   return(cv_mean)
 }
+
+
+
+skip_if_no_modules <- function() {
+  # skip tests if we don't have the required modules
+  have_numpy <- py_module_available("numpy")
+  if (!have_numpy) {
+    skip("numpy not available for testing")
+  }
+  have_tensorly <- py_module_available("tensorly")
+  if (!have_numpy) {
+    skip("tensorly not available for testing")
+  }
+  have_sklearn <- py_module_available("sklearn")
+  if (!have_numpy) {
+    skip("sklearn not available for testing")
+  }
+}

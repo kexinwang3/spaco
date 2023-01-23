@@ -4,6 +4,7 @@
 
 test_that(
   "The rank_selection() returns a likelihood matrix when early_stop is true.", {
+    skip_if_no_modules()
     data("impact_imputed")
     data("impact_missing")
     impact <- impact_data_wrangling(impact_missing, impact_imputed)
@@ -19,6 +20,7 @@ test_that(
 test_that(
   "The rank_selection() expects errors when ranks contain integers
   less than or equal to 1.", {
+    skip_if_no_modules()
     data("impact_imputed")
     data("impact_missing")
     impact <- impact_data_wrangling(impact_missing, impact_imputed)
@@ -37,6 +39,7 @@ test_that(
 test_that(
   "The train_prepare() expects warinings when the range of dfs for modeling the
   trajectories is not specified.", {
+    skip_if_no_modules()
     data("impact_imputed")
     data("impact_missing")
     impact <- impact_data_wrangling(impact_missing, impact_imputed)
@@ -48,6 +51,7 @@ test_that(
 test_that(
   "The train_prepare() runs without errors when run_prepare and run_initial
   are false.", {
+    skip_if_no_modules()
     data("impact_imputed")
     data("impact_missing")
     impact <- impact_data_wrangling(impact_missing, impact_imputed)
@@ -65,6 +69,7 @@ test_that(
 
 test_that(
   "The train_spaco() prints out the progress when trace is true.", {
+    skip_if_no_modules()
     data("impact_imputed")
     data("impact_missing")
     impact <- impact_data_wrangling(impact_missing, impact_imputed)

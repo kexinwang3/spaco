@@ -4,6 +4,7 @@
 
 test_that(
   "The V_init() runs without errors when initialization type is random.", {
+    skip_if_no_modules()
     data("impact_imputed")
     data("impact_missing")
     impact <- impact_data_wrangling(impact_missing, impact_imputed)
@@ -20,6 +21,7 @@ test_that(
 
 test_that(
   "The Phi_init() runs without errors when initialization type is random.", {
+    skip_if_no_modules()
     data("impact_imputed")
     data("impact_missing")
     impact <- impact_data_wrangling(impact_missing, impact_imputed)
@@ -36,6 +38,7 @@ test_that(
 
 test_that(
   "The beta_update() runs without errors when update_lasso_penalty is false.", {
+    skip_if_no_modules()
     data("impact_imputed")
     data("impact_missing")
     impact <- impact_data_wrangling(impact_missing, impact_imputed)
@@ -53,6 +56,7 @@ test_that(
 
 test_that(
   "The prepare() runs without errors when mean_removal is true.", {
+    skip_if_no_modules()
     data("impact_imputed")
     data("impact_missing")
     impact <- impact_data_wrangling(impact_missing, impact_imputed)
