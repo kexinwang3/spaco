@@ -1,4 +1,4 @@
-## Code to prepare `DATASET` dataset goes here
+## Prepare `DATASET` dataset
 
 impact_missing <- read.csv(file = "impact_missing.csv", header = TRUE)
 impact_imputed <- read.csv(file = "impact_imputed.csv", header = TRUE)
