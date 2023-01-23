@@ -66,5 +66,3 @@ jobs:
                      Sys.getenv("GITHUB_ENV"))
 
       - uses: r-lib/actions/check-r-package@v2
-        with:
-          upload-snapshots: true
