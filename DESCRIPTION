@@ -1,7 +1,7 @@
 Package: spaco
 Type: Package
 Title: spaco package
-Version: 0.1.0
+Version: 1.0.0
 Author: Who wrote it
 Maintainer: Kexin Wang <kexin.wang.kw789@yale.edu>
 Description: More about what it does (maybe more than one line)
