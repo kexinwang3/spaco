@@ -4,8 +4,8 @@ sklearn <- NULL
 
 .onLoad <- function(libname, pkgname) {
   # use superassignment to update global reference
+  numpy <<- reticulate::import("numpy", delay_load = TRUE)
   tensorly <<- reticulate::import("tensorly", delay_load = TRUE)
   sklearn <<- reticulate::import("sklearn", delay_load = TRUE)
-  numpy <<- reticulate::import("numpy", delay_load = TRUE)
-  reticulate::source_python(system.file("source_py.py", package = "spaco"))
+  py <<- reticulate::import_builtins()
 }

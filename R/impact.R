@@ -26,7 +26,9 @@ impact_data_wrangling <- function(impact_missing, impact_imputed) {
   normalization <- qnorm(a)
   colnames(X_pt) <- NULL
   X_pt <- matrix(unlist(X_pt), nrow = dim(X_pt)[1])
-  X_pt <- sort_py(X_pt, normalization)
+  for (i in seq(1, dim(X_pt)[2])) {
+    X_pt[, i] <- normalization[numpy$argsort(numpy$argsort(X_pt[, i])) + 1]
+  }
   ids <- substr(Z_pt$ID, 1, 5)
   ids_unique <- unique(ids)
   DFSO <- Z_pt$DFSO

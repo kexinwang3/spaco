@@ -479,25 +479,6 @@ reordering <- function(self) {
 
 
 
-cut_foldid <- function(n, nfolds, random_state) {
-  train_ids <- cutfoldid_py(n, nfolds, random_state)[[1]]
-  test_ids <- cutfoldid_py(n, nfolds, random_state)[[2]]
-  for (i in seq(1, length(train_ids))) {
-    train_ids[[i]] <- train_ids[[i]] + 1
-  }
-  for (i in seq(1, length(test_ids))) {
-    test_ids[[i]] <- test_ids[[i]] + 1
-  }
-  multi_return <- function() {
-    return_list <- list("train_ids" = train_ids, "test_ids" = test_ids)
-    return(return_list)
-  }
-  ids_split <- multi_return()
-  return(ids_split)
-}
-
-
-
 cross_validation_train <- function(self, train_ids, test_ids, max_iter = 10,
                                    min_iter = 1, tol = 1e-3, trace = TRUE) {
   s <- array(0, self$num_times * self$num_features)
@@ -583,6 +564,7 @@ cross_validation_train <- function(self, train_ids, test_ids, max_iter = 10,
   }
   return(self)
 }
+
 
 
 log_likelihood <- function(self) {

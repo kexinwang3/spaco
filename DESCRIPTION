@@ -22,8 +22,8 @@ Imports:
     reticulate,
     stats,
     glmnet,
-    pracma
-Suggests: 
-    testthat (>= 3.0.0),
+    pracma,
+    testthat (>= 3.0.0)
+Suggests:
     xml2
 Config/testthat/edition: 3

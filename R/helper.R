@@ -287,18 +287,72 @@ subject_cv_mean <- function(X, Psi, O1, s0, Omega, lams) {
 
 
 
+parafac_svd <- function(G, K, random_state) {
+  K <- as.integer(K)
+  random_state <- as.integer(random_state)
+  numpy$random$sample(random_state)
+  # svd for matrix initialization
+  Gparafac <- tensorly$decomposition$parafac(tensor = G, rank = K,
+                                             n_iter_max = as.integer(10000),
+                                             init = "svd",
+                                             random_state = random_state)[1]
+  return(Gparafac)
+}
+
+
+
+parafac_random <- function(G, K, random_state) {
+  K <- as.integer(K)
+  random_state <- as.integer(random_state)
+  numpy$random$sample(random_state)
+  # random for matrix initialization
+  Gparafac <- tensorly$decomposition$parafac(tensor = G, rank = K,
+                                             n_iter_max = as.integer(100),
+                                             init = "random",
+                                             random_state = random_state)[1]
+  return(Gparafac)
+}
+
+
+
+cut_foldid <- function(n, nfolds, random_state) {
+  n <- as.integer(n)
+  nfolds <- as.integer(nfolds)
+  random_state <- as.integer(random_state)
+  k_fold <- sklearn$model_selection$KFold(n_splits = nfolds, shuffle = TRUE,
+                                          random_state = random_state)
+  subject_ids <- seq(1, n)
+  split_id_obj <- k_fold$split(X = subject_ids)
+  train_ids <- list()
+  test_ids <- list()
+  index <- py$list(py$enumerate(split_id_obj))
+  for (i in seq(1, nfolds)) {
+    train_ids[[i]] <- index[[i]][[2]][[1]] + 1
+    test_ids[[i]] <- index[[i]][[2]][[2]] + 1
+  }
+  multi_return <- function() {
+    data_split <- list("train_ids" = train_ids, "test_ids" = test_ids)
+    return(data_split)
+  }
+  data_split <- multi_return()
+  return(data_split)
+}
+
+
+#' @importFrom testthat skip
+#' @importFrom reticulate py_module_available
 skip_if_no_modules <- function() {
   # skip tests if we don't have the required modules
-  have_numpy <- py_module_available("numpy")
+  have_numpy <- reticulate::py_module_available("numpy")
   if (!have_numpy) {
     skip("numpy not available for testing")
   }
   have_tensorly <- py_module_available("tensorly")
-  if (!have_numpy) {
+  if (!have_tensorly) {
     skip("tensorly not available for testing")
   }
   have_sklearn <- py_module_available("sklearn")
-  if (!have_numpy) {
+  if (!have_sklearn) {
     skip("sklearn not available for testing")
   }
 }
