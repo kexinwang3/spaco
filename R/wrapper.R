@@ -1,6 +1,7 @@
 # Wrapper for run SPACO starting from the input data
 
 #' @importFrom stats rnorm var
+#' @export
 rank_selection <- function(X, OBS, T1, Z, ranks, early_stop = TRUE,
                            max_iter = 30, cv_iter = 5, nfolds = 5,
                            extra_std = 0, random_state = 2022, trace = TRUE) {
@@ -48,6 +49,7 @@ rank_selection <- function(X, OBS, T1, Z, ranks, early_stop = TRUE,
 
 
 
+#' @export
 train_prepare <- function(X, OBS, T1, Z, K = NULL,
                           run_prepare = TRUE, run_initial = TRUE,
                           random_number = 10, random_state = 0,
@@ -123,6 +125,7 @@ train_prepare <- function(X, OBS, T1, Z, K = NULL,
 
 
 
+#' @export
 train_spaco <- function(self, max_iter = 100, min_iter = 1, tol = 1e-6,
                         update_sigma_mu = TRUE, update_sigma_noise = TRUE,
                         update_lasso_penalty = TRUE,
