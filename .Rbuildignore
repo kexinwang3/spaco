@@ -6,3 +6,4 @@
 ^\.git$
 ^README\.Rmd$
 ^\.github$
+^codecov\.yml$
