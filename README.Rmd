@@ -17,6 +17,9 @@ knitr::opts_chunk$set(
 
 <!-- badges: start -->
 [![R-CMD-check](https://github.com/kexinwang3/spaco/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/kexinwang3/spaco/actions/workflows/R-CMD-check.yaml)
+[![test-coverage](https://github.com/kexinwang3/spaco/actions/workflows/test-coverage.yaml/badge.svg)](https://github.com/kexinwang3/spaco/actions/workflows/test-coverage.yaml)
+[![Codecov test coverage](https://codecov.io/gh/kexinwang3/spaco/branch/main/graph/badge.svg)](https://app.codecov.io/gh/kexinwang3/spaco?branch=main)
+[![lint](https://github.com/kexinwang3/spaco/actions/workflows/lint.yaml/badge.svg)](https://github.com/kexinwang3/spaco/actions/workflows/lint.yaml)
 <!-- badges: end -->
 
 The goal of spaco is to ...
