@@ -96,6 +96,7 @@ impact_data_wrangling <- function(impact_missing, impact_imputed) {
 }
 
 
+
 #' @importFrom pracma Reshape
 impact_predict <- function(spaco_object) {
   muPhi <- matrix(0, nrow = spaco_object$num_times * spaco_object$num_subjects,
@@ -119,6 +120,7 @@ impact_predict <- function(spaco_object) {
   }
   return(spaco_object)
 }
+
 
 
 #' @importFrom graphics par lines points
