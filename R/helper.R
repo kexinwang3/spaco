@@ -348,11 +348,11 @@ skip_if_no_modules <- function() {
   if (!have_numpy) {
     skip("numpy not available for testing")
   }
-  have_tensorly <- py_module_available("tensorly")
+  have_tensorly <- reticulate::py_module_available("tensorly")
   if (!have_tensorly) {
     skip("tensorly not available for testing")
   }
-  have_sklearn <- py_module_available("sklearn")
+  have_sklearn <- reticulate::py_module_available("sklearn")
   if (!have_sklearn) {
     skip("sklearn not available for testing")
   }
