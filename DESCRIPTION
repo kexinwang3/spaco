@@ -25,5 +25,6 @@ Imports:
     pracma,
     testthat (>= 3.0.0)
 Suggests:
+    covr,
     xml2
 Config/testthat/edition: 3
