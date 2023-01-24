@@ -36,7 +36,14 @@ rank_selection <- function(X, OBS, T1, Z, ranks, early_stop = TRUE,
       }
     }
   }
-  return(neglik)
+  means <- colMeans(neglik)
+  means_std <- means + sqrt(colMeans(sweep(neglik, 2, colMeans(neglik))^2)) /
+    sqrt(dim(X)[1]) * 0.5
+  means <- means[!is.na(means)]
+  means_std <- means_std[!is.na(means_std)]
+  idx_min <- which.min(means)
+  rank <- as.integer(ranks[idx_min])
+  return(rank)
 }
 
 

@@ -101,7 +101,7 @@ impact_data_wrangling <- function(impact_missing, impact_imputed) {
 impact_predict <- function(spaco_object) {
   muPhi <- matrix(0, nrow = spaco_object$num_times * spaco_object$num_subjects,
                   ncol = spaco_object$K)
-  for (k in 1:spaco_object$K) {
+  for (k in seq(1, spaco_object$K)) {
     muPhi[, k] <- Reshape(kronecker(Reshape(spaco_object$Phi[, k],
                                             spaco_object$num_times, 1),
                                     Reshape(spaco_object$mu[, k],

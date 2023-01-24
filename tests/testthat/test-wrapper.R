@@ -3,17 +3,17 @@
 # rank_selection() -------------------------------------------------------------
 
 test_that(
-  "The rank_selection() returns a likelihood matrix when early_stop is true.", {
+  "The rank_selection() returns an integer when early_stop is true.", {
     skip_if_no_modules()
     data("impact_imputed")
     data("impact_missing")
     impact <- impact_data_wrangling(impact_missing, impact_imputed)
     ranks <- c(2:10)
-    neglik <- suppressWarnings(rank_selection(X = impact$X, OBS = impact$OBS,
+    rank <- suppressWarnings(rank_selection(X = impact$X, OBS = impact$OBS,
                                               T1 = impact$T1, Z = impact$Z,
                                               ranks = ranks, early_stop = TRUE,
                                               trace = FALSE))
-    expect_true(inherits(neglik, "matrix"))
+    expect_true(inherits(rank, "integer"))
   }
 )
 
