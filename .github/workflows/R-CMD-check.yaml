@@ -55,7 +55,7 @@ jobs:
         shell: Rscript {0}
         run: |
           python_packages <-
-            c("numpy", "tensorly", "sklearn")
+            c("numpy", "tensorly", "scikit-learn")
 
           library(reticulate)
           virtualenv_create("r-reticulate", Sys.which("python"))
