@@ -25,12 +25,6 @@ jobs:
           extra-packages: any::lintr, local::.
           needs: lint
 
-      - linters: all_linters(
-          commented_code_linter = NULL,
-          object_name_linter = NULL,
-          cyclocomp_linter = NULL
-          )
-
       - name: Lint
         run: lintr::lint_package()
         shell: Rscript {0}
