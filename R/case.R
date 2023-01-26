@@ -153,11 +153,11 @@ impact_data_wrangling <- function(impact_missing, impact_imputed) {
 #'                             tol = 1e-4, trace = TRUE)
 #' @export
 immune_data_wrangling <- function(immune_original) {
-  columns <- colnames(immune)
-  columns_covariate <- colnames(immune)[1:26]
-  columns_feature <- colnames(immune)[27:170]
-  covariate <- immune[, columns_covariate]
-  feature <- immune[, columns_feature]
+  columns <- colnames(immune_original)
+  columns_covariate <- colnames(immune_original)[1:26]
+  columns_feature <- colnames(immune_original)[27:170]
+  covariate <- immune_original[, columns_covariate]
+  feature <- immune_original[, columns_feature]
 
   for (i in seq(1, dim(feature)[1])) {
     for (j in seq(1, dim(feature)[2])) {
