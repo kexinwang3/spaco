@@ -1,6 +1,31 @@
 # Case study: impact
 
+#' @title Data Wrangling for IMPACT Dataset
+#' @description This function transforms and maps raw data form of IMPACT into
+#' the desired format. Features with more than 20% missingness are excluded.
+#' Several covariates are selected including `COVIDRISK_1`, `COVIDRISK_2`,
+#' `COVIDRISK_3`, `COVIDRISK_4`, `COVIDRISK_5`, `Age`, `sex`, and `BMI`.
+#' @param impact_missing IMPACT dataset with missing values.
+#' @param impact_imputed IMPACT dataset after imputing missing values.
+#' @return A list `impact` containing the following elements:
+#' \item{X}{A 98 (number of subjects) × 35 (number of times) × 111 (number
+#' of features) array containing time-series data.}
+#' \item{OBS}{A 98 (number of subjects) × 35 (number of times) × 111 (number
+#' of features) array indicating whether an observation is available in array
+#' `X`.}
+#' \item{T1}{A length 35 (number of times) vector containing measured time.}
+#' \item{Z}{A 98 (number of subjects) × 8 (number of covariates) matrix
+#' containing auxiliary covariates.}
+#' \item{Y}{A 98 (number of subjects) × 4 (number of responses) matrix
+#' containing responses.}
+#' \item{imputed_pt}{Patient data obtained from IMPACT dataset.}
+#' \item{filtered_feature_idx}{Indices of filtered features.}
 #' @importFrom stats qnorm
+#' @examples
+#' data("impact_imputed")
+#' data("impact_missing")
+#' impact <- impact_data_wrangling(impact_missing, impact_imputed)
+#' @export
 impact_data_wrangling <- function(impact_missing, impact_imputed) {
   missing <- impact_missing
   imputed <- impact_imputed
@@ -86,7 +111,7 @@ impact_data_wrangling <- function(impact_missing, impact_imputed) {
   T1 <- sqrt(seq(1, length(T0)) - 1)
 
   multi_return <- function() {
-    return_list <- list("X" = X, "OBS" = OBS, "Z" = Z, "T1" = T1, "Y" = Y,
+    return_list <- list("X" = X, "OBS" = OBS, "T1" = T1, "Z" = Z, "Y" = Y,
                         "imputed_pt" = imputed_pt,
                         "filtered_feature_idx" = filtered_feature_idx)
     return(return_list)

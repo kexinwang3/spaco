@@ -1,6 +1,43 @@
 # Wrapper for run SPACO starting from the input data
 
+#' @title Rank Selection via Cross-validation
+#' @description This function performs rank selection as suggested in SupCP
+#' (Lock and Li, 2018). Model parameters are estimated on the training sets
+#' and evaluated on the test sets. The rank is chosen to be the value that
+#' achieves the lowest log-likelihood of test sets.
+#' @param X An `I` (number of subjects) × `T` (number of times) × `J` (number
+#' of features) array containing time-series data.
+#' @param OBS An `I` (number of subjects) × `T` (number of times) × `J` (number
+#' of features) array indicating whether an observation is available in array
+#' `X`.
+#' @param T1 A length `T` (number of times) vector containing measured time.
+#' @param Z An `I` (number of subjects) × `q` (number of covariates) matrix
+#' containing auxiliary covariates.
+#' @param ranks An array of ranks containing integers greater than 1 from
+#' which to select potential ranks.
+#' @param early_stop Whether to stop the process when the cross-validated
+#' marginal log-likelihood is no longer decreasing. Default is TRUE.
+#' @param max_iter Maximum number of iterations in the model training
+#' process. Default is 30.
+#' @param cv_iter Maximum number of iterations in the cross-validated
+#' training process. Default is 5.
+#' @param nfolds Number of folds. Default is 5.
+#' @param extra_std Coefficient of standard deviation when calculating the
+#' standard deviation of log-likelihood. Default is 0.
+#' @param random_state Control the randomness of each fold. When shuffling the
+#' data before splitting into batches, it affects the ordering of the indices.
+#' Default is 2022.
+#' @param trace Whether to print the model training process. Default is TRUE.
+#' @return An integer indicating selected rank.
 #' @importFrom stats rnorm var
+#' @examples
+#' data("impact_imputed")
+#' data("impact_missing")
+#' impact <- impact_data_wrangling(impact_missing, impact_imputed)
+#' ranks <- c(2:10)
+#' rank <- rank_selection(X = impact$X, OBS = impact$OBS, T1 = impact$T1,
+#'                        Z = impact$Z, ranks = ranks, early_stop = TRUE)
+#' @export
 rank_selection <- function(X, OBS, T1, Z, ranks, early_stop = TRUE,
                            max_iter = 30, cv_iter = 5, nfolds = 5,
                            extra_std = 0, random_state = 2022, trace = TRUE) {
