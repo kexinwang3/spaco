@@ -1,7 +1,7 @@
 
 <!-- README.md is generated from README.Rmd. Please edit that file -->
 
-# spaco
+# spaco (Rcpp Implementation of SPACO)
 
 <!-- badges: start -->
 
@@ -10,9 +10,49 @@
 [![lint](https://github.com/kexinwang3/spaco/actions/workflows/lint.yaml/badge.svg)](https://github.com/kexinwang3/spaco/actions/workflows/lint.yaml)
 <!-- badges: end -->
 
-The goal of spaco is to …
+## Description
+
+`spaco` is an R package for modelling sparsely observed multivariate
+longitudinal data using SPACO model (Guan, 2022). It provides tools for
+initializing and estimating model parameters.
+
+This package contains 3 main functions:
+
+- `rank_selection`: performs rank selection via cross-validation.
+- `train_prepare`: prepares user-level input data for model training.
+- `train_spaco`: trains SPACO model on the prepared input data.
+
+There are 3 other functions for `IMPACT` case study:
+
+- `impact_data_wrangling`: transforms and maps raw data form of IMPACT
+  into the desired format.
+- `impact_predict`: evaluates the predictive power of SPACO model
+  trained on IMPACT dataset.
+- `impact_plot`: plots the observed versus estimated values for the
+  selected feature.
+
+The methodology background underlying the `spaco` package can be found
+in the original paper. A Python implementation of the model is also
+available on [GitHub](https://github.com/).
+
+- [Reference](https://arxiv.org/abs/2104.05184): Guan, Leying. “Smooth
+  and probabilistic PARAFAC model with auxiliary covariates.” arXiv
+  preprint arXiv:2104.05184 (2022).
+- [Python Implementation](https://github.com/LeyingGuan/SPACO): Guan,
+  Leying. “SPACO (Python Implementation of SPACO).” GitHub repository:
+  LeyingGuan/SPACO.
 
 ## Installation
+
+A conda environment is required to support Python modules in R
+interface.
+
+``` r
+install.packages("reticulate")
+reticulate::install_miniconda(force = TRUE)
+reticulate::conda_install(envname = "spaco_env",
+                          packages = c("numpy", "tensorly", "scikit-learn"))
+```
 
 You can install the development version of spaco from
 [GitHub](https://github.com/) with:
@@ -24,9 +64,73 @@ devtools::install_github("kexinwang3/spaco")
 
 ## Example
 
-This is a basic example which shows you how to solve a common problem:
+This is an example which shows you how to train SPACO model on `IMPACT`
+dataset:
+
+- Set up the Conda environment and load the library
 
 ``` r
+reticulate::use_condaenv("spaco_env", required = TRUE)
 library(spaco)
-## basic example code
 ```
+
+- Prepare `IMPACT` dataset
+
+``` r
+data("impact_imputed")
+data("impact_missing")
+impact <- impact_data_wrangling(impact_missing, impact_imputed)
+```
+
+- Perform rank selection
+
+``` r
+ranks <- c(2:10)
+rank <- rank_selection(X = impact$X, OBS = impact$OBS, T1 = impact$T1,
+                       Z = impact$Z, ranks = ranks, early_stop = TRUE)
+```
+
+- Train SPACO model
+
+``` r
+spaco_object <- train_prepare(X = impact$X, OBS = impact$OBS, T1 = impact$T1,
+                              Z = impact$Z, K = rank, mean_removal = FALSE)
+spaco_object <- train_spaco(spaco_object, max_iter = 30, min_iter = 1,
+                            tol = 1e-4, trace = TRUE)
+```
+
+- Evaluate predictive power
+
+``` r
+spaco_object <- impact_predict(spaco_object)
+```
+
+- Plot observed versus estimated values for selected features
+
+``` r
+impact_plot(spaco_object, "TcellsofLivecells",
+                        impact$imputed_pt, impact$filtered_feature_idx)
+```
+
+<img src="man/figures/README-impact-plot-1.png" width="100%" />
+
+``` r
+impact_plot(spaco_object, "TotalNeutrophilsofLivecells",
+                        impact$imputed_pt, impact$filtered_feature_idx)
+```
+
+<img src="man/figures/README-impact-plot-2.png" width="100%" />
+
+``` r
+impact_plot(spaco_object, "HLA.DR.ofTotalMono",
+                        impact$imputed_pt, impact$filtered_feature_idx)
+```
+
+<img src="man/figures/README-impact-plot-3.png" width="100%" />
+
+``` r
+impact_plot(spaco_object, "IL6",
+                        impact$imputed_pt, impact$filtered_feature_idx)
+```
+
+<img src="man/figures/README-impact-plot-4.png" width="100%" />
