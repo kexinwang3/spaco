@@ -22,13 +22,14 @@ This package contains 3 main functions:
 - `train_prepare`: prepares user-level input data for model training.
 - `train_spaco`: trains SPACO model on the prepared input data.
 
-There are 3 other functions for `IMPACT` case study:
+There are 4 other functions for case studies:
 
 - `impact_data_wrangling`: transforms and maps raw data form of IMPACT
   into the desired format.
-- `impact_predict`: evaluates the predictive power of SPACO model
-  trained on IMPACT dataset.
-- `impact_plot`: plots the observed versus estimated values for the
+- `immune_data_wrangling`: transforms and maps raw data form of IMMUNE
+  into the desired format.
+- `feature_predict`: evaluates the predictive power of SPACO model.
+- `feature_plot`: plots the observed versus estimated values for the
   selected feature.
 
 The methodology background underlying the `spaco` package can be found
@@ -44,7 +45,7 @@ available on [GitHub](https://github.com/).
 
 ## Installation
 
-A conda environment is required to support Python modules in R
+A Conda environment is required to support Python modules in R
 interface.
 
 ``` r
@@ -102,35 +103,31 @@ spaco_object <- train_spaco(spaco_object, max_iter = 30, min_iter = 1,
 - Evaluate predictive power
 
 ``` r
-spaco_object <- impact_predict(spaco_object)
+spaco_object <- feature_predict(spaco_object)
 ```
 
 - Plot observed versus estimated values for selected features
 
 ``` r
-impact_plot(spaco_object, "TcellsofLivecells",
-                        impact$imputed_pt, impact$filtered_feature_idx)
+feature_plot(spaco_object, "TcellsofLivecells", impact$columns_feature)
 ```
 
 <img src="man/figures/README-impact-plot-1.png" width="100%" />
 
 ``` r
-impact_plot(spaco_object, "TotalNeutrophilsofLivecells",
-                        impact$imputed_pt, impact$filtered_feature_idx)
+feature_plot(spaco_object, "TotalNeutrophilsofLivecells", impact$columns_feature)
 ```
 
 <img src="man/figures/README-impact-plot-2.png" width="100%" />
 
 ``` r
-impact_plot(spaco_object, "HLA.DR.ofTotalMono",
-                        impact$imputed_pt, impact$filtered_feature_idx)
+feature_plot(spaco_object, "HLA.DR.ofTotalMono", impact$columns_feature)
 ```
 
 <img src="man/figures/README-impact-plot-3.png" width="100%" />
 
 ``` r
-impact_plot(spaco_object, "IL6",
-                        impact$imputed_pt, impact$filtered_feature_idx)
+feature_plot(spaco_object, "IL6", impact$columns_feature)
 ```
 
 <img src="man/figures/README-impact-plot-4.png" width="100%" />
