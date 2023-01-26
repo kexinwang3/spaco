@@ -18,10 +18,10 @@
 #' containing auxiliary covariates.}
 #' \item{Y}{A 98 (number of subjects) × 4 (number of responses) matrix
 #' containing responses.}
-#' \item{imputed_pt}{Patient data obtained from IMPACT dataset.}
-#' \item{filtered_feature_idx}{Indices of filtered features for model training.}
+#' \item{columns_feature}{Name of all features.}
 #' @importFrom stats qnorm
 #' @examples
+#' # IMPACT
 #' data("impact_imputed")
 #' data("impact_missing")
 #' impact <- impact_data_wrangling(impact_missing, impact_imputed)
@@ -113,15 +113,163 @@ impact_data_wrangling <- function(impact_missing, impact_imputed) {
   Z[is.na(Z)] <- 0
   X <- X0
   T1 <- sqrt(seq(1, length(T0)) - 1)
+  columns_feature <- colnames(imputed_pt[, 25:159])[filtered_feature_idx]
 
   multi_return <- function() {
-    return_list <- list("X" = X, "OBS" = OBS, "T1" = T1, "Z" = Z, "Y" = Y,
-                        "imputed_pt" = imputed_pt,
-                        "filtered_feature_idx" = filtered_feature_idx)
+    return_list <- list("X" = X, "OBS" = OBS, "T1" = T1, "Z" = Z,
+                        "columns_feature" = columns_feature)
     return(return_list)
   }
   impact <- multi_return()
   return(impact)
+}
+
+
+
+#' @title Data Wrangling for IMMUNE Dataset
+#' @description This function transforms and maps raw data form of IMMUNE into
+#' the desired format. Features with missing values are excluded. Several
+#' covariates are selected including `age`, `sex`, `obesity`, `hospitalized`,
+#' `severity_group`, `intubated`, `alive`, `tocilizumab`, `heme`, and `bmt`.
+#' @param immune_original Original IMMUNE dataset.
+#' @return A list `immune` containing the following elements:
+#' \item{X}{A 36 (number of subjects) × 40 (number of times) × 133 (number
+#' of features) array containing time-series data.}
+#' \item{OBS}{A 36 (number of subjects) × 40 (number of times) × 133 (number
+#' of features) array indicating whether an observation is available in array
+#' `X`.}
+#' \item{T1}{A length 40 (number of times) vector containing measured time.}
+#' \item{Z}{A 36 (number of subjects) × 10 (number of covariates) matrix
+#' containing auxiliary covariates.}
+#' \item{columns_feature}{Name of all features.}
+#' @importFrom stats qnorm
+#' @examples
+#' # IMMUNE
+#' data("immune_original")
+#' immune <- immune_data_wrangling(immune_original)
+#' spaco_object <- train_prepare(X = immune$X, OBS = immune$OBS, T1 = immune$T1,
+#'                               Z = immune$Z, K = 5, mean_removal = FALSE)
+#' spaco_object <- train_spaco(spaco_object, max_iter = 30, min_iter = 1,
+#'                             tol = 1e-4, trace = TRUE)
+#' @export
+immune_data_wrangling <- function(immune_original) {
+  columns <- colnames(immune)
+  columns_covariate <- colnames(immune)[1:26]
+  columns_feature <- colnames(immune)[27:170]
+  covariate <- immune[, columns_covariate]
+  feature <- immune[, columns_feature]
+
+  for (i in seq(1, dim(feature)[1])) {
+    for (j in seq(1, dim(feature)[2])) {
+      if (grepl("%", feature[i, j], fixed = TRUE)) {
+        feature[i, j] <- as.numeric(sub("%", "", feature[i, j])) / 100
+      }
+    }
+  }
+
+  chars <- sapply(feature, is.character)
+  feature[, chars] <- as.data.frame(apply(feature[, chars], 2, as.numeric))
+  covariate <- covariate[-106, ]
+  feature <- feature[-106, ]
+  # remove columns with na
+  feature <- t(na.omit(t(feature)))
+  columns_feature <- colnames(feature)
+  severity <- covariate$severity_group
+  mild_idx <- which(severity == "mild")
+  severe_idx <- which(severity == "severe")
+  idx <- c(mild_idx, severe_idx)
+  feature0 <- feature[idx, ]
+  covariate0 <- covariate[idx, ]
+  n <- dim(feature0)[1]
+  a <- (array(0:(n - 1)) + 0.5) / n
+  normalization <- qnorm(a)
+  for (i in seq(1, dim(feature0)[2])) {
+    feature0[, i] <- normalization[numpy$argsort(numpy$argsort(feature0[, i]))
+                                   + 1]
+  }
+
+  T0 <- covariate0$time.days.from.symptoms.start
+  T0 <- as.double(T0)
+  patient_code <- covariate0$patient_code
+  patient_code_uni <- unique(patient_code)
+  T0_uni <- unique(T0)
+  X <- array(0, dim = c(length(patient_code_uni), length(T0_uni),
+                        dim(feature0)[2])) # 36,40,133
+  X[X == 0] <- NA
+
+  patient_code_uni <- sort.default(patient_code_uni)
+  T0_uni <- sort.default(T0_uni)
+  Zname <- c("age", "sex", "race", "obesity", "bmi", "hospitalized",
+             "severity_group", "intubated", "alive", "tocilizumab",
+             "heme", "bmt")
+  Z0 <- matrix(0, nrow = length(patient_code_uni), ncol = length(Zname))
+  for (i in seq(1, length(patient_code_uni))) {
+    idx <- which(covariate0$patient_code == patient_code_uni[i])
+    f <- feature0[idx, ]
+    c <- covariate0[idx, ]
+    for (j in seq(1, length(Zname))) {
+      z <- which(columns_covariate == Zname[j])
+      Z0[i, j] <- c[1, z]
+    }
+    for (t in seq(1, length(idx))) {
+      tmp <- as.double(c[t, 15])
+      t_idx <- which(T0_uni == tmp)
+      if (is.null(dim(f))) {
+        X[i, t_idx, ] <- as.double(f)
+      } else {
+        X[i, t_idx, ] <- as.double(f[t, ])
+      }
+    }
+  }
+
+  OBS <- array(0, dim = c(dim(X)[1], dim(X)[2], dim(X)[3]))
+  OBS[!is.na(X)] <- 1
+  T1 <- sqrt(c(0:(length(T0_uni) - 1))) # 40
+
+  Zdf <- as.data.frame(Z0)
+  colnames(Zdf) <- Zname
+  Zdf$age <- as.double(Zdf$age)
+  Zdf$bmi <- as.double(Zdf$bmi)
+  Zdf$severity_group[Zdf$severity_group == "severe"] <- 1
+  Zdf$severity_group[Zdf$severity_group == "mild"] <- 0
+  Zdf$intubated[Zdf$intubated == "intubated"] <- 1
+  Zdf$intubated[Zdf$intubated == "not intubated"] <- 0
+  Zdf$tocilizumab[Zdf$tocilizumab == "yes"] <- 1
+  Zdf$tocilizumab[Zdf$tocilizumab == "no"] <- 0
+  Zdf$sex[Zdf$sex == "f"] <- 1
+  Zdf$sex[Zdf$sex == "F"] <- 1
+  Zdf$sex[Zdf$sex == "m"] <- 0
+  Zdf$sex[Zdf$sex == "M"] <- 0
+  Zdf$alive[Zdf$alive == "dead"] <- 1
+  Zdf$alive[Zdf$alive == "alive"] <- 0
+  Zdf$hospitalized[Zdf$hospitalized == "yes"] <- 1
+  Zdf$hospitalized[Zdf$hospitalized == "no"] <- 0
+  Zdf$heme[Zdf$heme == "yes"] <- 1
+  Zdf$heme[Zdf$heme == "no"] <- 0
+  Zdf$bmt[Zdf$bmt == "yes"] <- 1
+  Zdf$bmt[Zdf$bmt == "no"] <- 0
+  Zdf$obesity[Zdf$obesity == "obese"] <- 2
+  Zdf$obesity[Zdf$obesity == "overweight"] <- 1
+  Zdf$obesity[Zdf$obesity == "overwheight"] <- 1
+  Zdf$obesity[Zdf$obesity == "nonobese"] <- 0
+  Zdf$obesity[Zdf$obesity == ""] <- 0
+  Zname <- c("age", "sex", "obesity", "hospitalized", "severity_group",
+             "intubated", "alive", "tocilizumab", "heme", "bmt")
+  Z <- Zdf[, Zname] # 36,10
+  Z <- as.matrix(Z)
+  class(Z) <- "numeric"
+  for (i in seq(1, dim(Z)[2])) {
+    Zn <- length(Z[, i])
+    Z[, i] <- (Z[, i] - mean(Z[, i])) / sqrt((var(Z[, i]) * (Zn - 1) / Zn))
+  }
+
+  multi_return <- function() {
+    return_list <- list("X" = X, "OBS" = OBS, "T1" = T1, "Z" = Z,
+                        "columns_feature" = columns_feature)
+    return(return_list)
+  }
+  immune <- multi_return()
+  return(immune)
 }
 
 
@@ -136,6 +284,7 @@ impact_data_wrangling <- function(impact_missing, impact_imputed) {
 #' @return A list containing the predictive values.
 #' @importFrom pracma Reshape
 #' @examples
+#' # IMPACT
 #' data("impact_imputed")
 #' data("impact_missing")
 #' impact <- impact_data_wrangling(impact_missing, impact_imputed)
@@ -143,9 +292,18 @@ impact_data_wrangling <- function(impact_missing, impact_imputed) {
 #'                               Z = impact$Z, K = 4, mean_removal = FALSE)
 #' spaco_object <- train_spaco(spaco_object, max_iter = 30, min_iter = 1,
 #'                             tol = 1e-4, trace = TRUE)
-#' spaco_object <- impact_predict(spaco_object)
+#' spaco_object <- feature_predict(spaco_object)
+#'
+#' # IMMUNE
+#' data("immune_original")
+#' immune <- immune_data_wrangling(immune_original)
+#' spaco_object <- train_prepare(X = immune$X, OBS = immune$OBS, T1 = immune$T1,
+#'                               Z = immune$Z, K = 5, mean_removal = FALSE)
+#' spaco_object <- train_spaco(spaco_object, max_iter = 30, min_iter = 1,
+#'                             tol = 1e-4, trace = TRUE)
+#' spaco_object <- feature_predict(spaco_object)
 #' @export
-impact_predict <- function(spaco_object) {
+feature_predict <- function(spaco_object) {
   muPhi <- matrix(0, nrow = spaco_object$num_times * spaco_object$num_subjects,
                   ncol = spaco_object$K)
   for (k in seq(1, spaco_object$K)) {
@@ -176,12 +334,12 @@ impact_predict <- function(spaco_object) {
 #' @param spaco_object A list containing the results of model training. It is
 #' assumed to include elements `num_subjects`, `num_times`, `X`, `OBS`, and
 #' `Xhat`.
-#' @param feature_name Name of the selected feature.
-#' @param imputed_pt Patient data obtained from IMPACT dataset.
-#' @param filtered_feature_idx Indices of filtered features for model training.
+#' @param selected_feature Name of the selected feature.
+#' @param columns_feature Name of all features.
 #' @return A plot of the observed versus estimated values.
 #' @importFrom graphics par lines points
 #' @examples
+#' # IMPACT
 #' data("impact_imputed")
 #' data("impact_missing")
 #' impact <- impact_data_wrangling(impact_missing, impact_imputed)
@@ -189,21 +347,29 @@ impact_predict <- function(spaco_object) {
 #'                               Z = impact$Z, K = 4, mean_removal = FALSE)
 #' spaco_object <- train_spaco(spaco_object, max_iter = 30, min_iter = 1,
 #'                             tol = 1e-4, trace = TRUE)
-#' spaco_object <- impact_predict(spaco_object)
-#' impact_plot(spaco_object, "TcellsofLivecells",
-#'             impact$imputed_pt, impact$filtered_feature_idx)
-#' impact_plot(spaco_object, "TotalNeutrophilsofLivecells",
-#'             impact$imputed_pt, impact$filtered_feature_idx)
-#' impact_plot(spaco_object, "HLA.DR.ofTotalMono",
-#'             impact$imputed_pt, impact$filtered_feature_idx)
-#' impact_plot(spaco_object, "IL6",
-#'             impact$imputed_pt, impact$filtered_feature_idx)
+#' spaco_object <- feature_predict(spaco_object)
+#' feature_plot(spaco_object, "TcellsofLivecells", impact$columns_feature)
+#' feature_plot(spaco_object, "TotalNeutrophilsofLivecells",
+#'             impact$columns_feature)
+#' feature_plot(spaco_object, "HLA.DR.ofTotalMono", impact$columns_feature)
+#' feature_plot(spaco_object, "IL6", impact$columns_feature)
+#'
+#' # IMMUNE
+#' data("immune_original")
+#' immune <- immune_data_wrangling(immune_original)
+#' spaco_object <- train_prepare(X = immune$X, OBS = immune$OBS, T1 = immune$T1,
+#'                               Z = immune$Z, K = 5, mean_removal = FALSE)
+#' spaco_object <- train_spaco(spaco_object, max_iter = 30, min_iter = 1,
+#'                             tol = 1e-4, trace = TRUE)
+#' spaco_object <- feature_predict(spaco_object)
+#' feature_plot(spaco_object, "IgG..LY", immune$columns_feature)
+#' feature_plot(spaco_object, "CD19._CD20..LY.1", immune$columns_feature)
+#' feature_plot(spaco_object, "CD4._CD8..CD3.", immune$columns_feature)
+#' feature_plot(spaco_object, "LY.All_CD45", immune$columns_feature)
 #' @export
-impact_plot <- function(spaco_object, feature_name,
-                        imputed_pt, filtered_feature_idx) {
+feature_plot <- function(spaco_object, selected_feature, columns_feature) {
   par(pty = "s")
-  columns_feature <- colnames(imputed_pt[, 25:159])[filtered_feature_idx]
-  j0 <- which(columns_feature == feature_name)
+  j0 <- which(columns_feature == selected_feature)
   x0 <- Reshape(spaco_object$X[1, , j0], 1, spaco_object$num_times)
   e0 <- Reshape(spaco_object$Xhat[1, , j0], 1, spaco_object$num_times)
   o0 <- spaco_object$OBS[1, , 1]
@@ -216,10 +382,10 @@ impact_plot <- function(spaco_object, feature_name,
     s2 <- sort(s1, index.return = TRUE)$ix
     plot(e0, x0, type = "l", lwd = 2, col = 4,
          xlab = "Estimated", ylab = "Observed", xlim = c(-2, 2),
-         ylim = c(-3, 3), cex.lab = 1, cex.main = 1.2, main = feature_name)
+         ylim = c(-3, 3), cex.lab = 1, cex.main = 1.2, main = selected_feature)
   } else {
     plot(e0, x0, pch = 20, col = 4, xlim = c(-1, 1), ylim = c(-2, 2),
-              main = feature_name)
+              main = selected_feature)
   }
 
   for (i in seq(2, spaco_object$num_subjects)) {

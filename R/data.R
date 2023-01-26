@@ -38,7 +38,7 @@ NULL
 #' `Y` acceleration in the "Y" direction;
 #' `Z` acceleration in the "Z" direction;
 #'
-#' @name immune
+#' @name immune_original
 #' @docType data
 #' @keywords data
 NULL
