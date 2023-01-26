@@ -239,7 +239,7 @@ Phi_update <- function(self) {
   Phitilde <- self$Phi
   Phi_solver_list <- Phi_solver(self$K, self$num_times, self$nlambda1,
                                 self$lambda1_dfmin, self$lambda1_dfmax,
-                                self$ridge_traj, self$lam1criterion,
+                                self$ridge_traj, self$lam1_criterion,
                                 self$h, self$update_smooth_penalty,
                                 self$lambda1, self$Phi, h, self$Omega, M)
   self$Phi <- Phi_solver_list$Phi
@@ -252,7 +252,7 @@ Phi_update <- function(self) {
 
 beta_fit <- function(Z, mat, vec, beta, intercepts, lambda2,
                      fit_intercept = TRUE, update_lasso_penalty = TRUE,
-                     nlambda2 = 100, betafolds = 5, foldid = NULL,
+                     nlambda2 = 100, beta_folds = 5, foldid = NULL,
                      max_iter = 1, tol = 0.01) {
   Z0 <- Z
   beta0 <- beta
@@ -286,7 +286,7 @@ beta_fit <- function(Z, mat, vec, beta, intercepts, lambda2,
       }
       if (update_lasso_penalty) {
         cv <- my_cv_glmnet(Ztrans, mutrans, nlambda2, penalty_factor,
-                           betafolds, foldid)
+                           beta_folds, foldid)
         lambda2[k] <- cv$lambda.min
         coefficients <- cv$coefficients
       } else {
@@ -324,7 +324,7 @@ beta_update <- function(self) {
     beta_list <- beta_fit(self$Z, self$mat, self$vec, self$beta,
                           self$intercepts, self$lambda2, self$fit_intercept,
                           self$update_lasso_penalty, self$nlambda2,
-                          self$betafolds, self$foldid,
+                          self$beta_folds, self$foldid,
                           max_iter = 1, tol = 0.01)
     self$beta <- beta_list$beta
     self$intercepts <- beta_list$intercepts
@@ -333,7 +333,7 @@ beta_update <- function(self) {
     beta_list <- beta_fit(self$Z, self$mat, self$vec, self$beta,
                           self$intercepts, self$lambda2, self$fit_intercept,
                           self$update_lasso_penalty, self$nlambda2,
-                          self$betafolds, self$foldid,
+                          self$beta_folds, self$foldid,
                           max_iter = 1, tol = 0.01)
     self$beta <- beta_list$beta
     self$intercepts <- beta_list$intercepts

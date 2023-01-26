@@ -24,7 +24,7 @@ containing auxiliary covariates.}
 \item{Y}{A 98 (number of subjects) × 4 (number of responses) matrix
 containing responses.}
 \item{imputed_pt}{Patient data obtained from IMPACT dataset.}
-\item{filtered_feature_idx}{Indices of filtered features.}
+\item{filtered_feature_idx}{Indices of filtered features for model training.}
 }
 \description{
 This function transforms and maps raw data form of IMPACT into
@@ -36,4 +36,8 @@ Several covariates are selected including \code{COVIDRISK_1}, \code{COVIDRISK_2}
 data("impact_imputed")
 data("impact_missing")
 impact <- impact_data_wrangling(impact_missing, impact_imputed)
+spaco_object <- train_prepare(X = impact$X, OBS = impact$OBS, T1 = impact$T1,
+                              Z = impact$Z, K = 4, mean_removal = FALSE)
+spaco_object <- train_spaco(spaco_object, max_iter = 30, min_iter = 1,
+                            tol = 1e-4, trace = TRUE)
 }

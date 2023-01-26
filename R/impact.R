@@ -19,12 +19,16 @@
 #' \item{Y}{A 98 (number of subjects) × 4 (number of responses) matrix
 #' containing responses.}
 #' \item{imputed_pt}{Patient data obtained from IMPACT dataset.}
-#' \item{filtered_feature_idx}{Indices of filtered features.}
+#' \item{filtered_feature_idx}{Indices of filtered features for model training.}
 #' @importFrom stats qnorm
 #' @examples
 #' data("impact_imputed")
 #' data("impact_missing")
 #' impact <- impact_data_wrangling(impact_missing, impact_imputed)
+#' spaco_object <- train_prepare(X = impact$X, OBS = impact$OBS, T1 = impact$T1,
+#'                               Z = impact$Z, K = 4, mean_removal = FALSE)
+#' spaco_object <- train_spaco(spaco_object, max_iter = 30, min_iter = 1,
+#'                             tol = 1e-4, trace = TRUE)
 #' @export
 impact_data_wrangling <- function(impact_missing, impact_imputed) {
   missing <- impact_missing
@@ -122,7 +126,25 @@ impact_data_wrangling <- function(impact_missing, impact_imputed) {
 
 
 
+#' @title Prediction for IMPACT Dataset
+#' @description This function evaluates the predictive power of SPACO model
+#' trained on IMPACT dataset. The observation for each subject is predicted by
+#' \deqn{\hat{x}_{itj} =  \sum_{k=1}^K \hat{u}_{ik} \phi_{kt} v_{jk}}
+#' @param spaco_object A list containing the results of model training. It is
+#' assumed to include elements `num_subjects`, `num_times`, `K`, `X`, `V`,
+#' `Phi`, and `mu`.
+#' @return A list containing the predictive values.
 #' @importFrom pracma Reshape
+#' @examples
+#' data("impact_imputed")
+#' data("impact_missing")
+#' impact <- impact_data_wrangling(impact_missing, impact_imputed)
+#' spaco_object <- train_prepare(X = impact$X, OBS = impact$OBS, T1 = impact$T1,
+#'                               Z = impact$Z, K = 4, mean_removal = FALSE)
+#' spaco_object <- train_spaco(spaco_object, max_iter = 30, min_iter = 1,
+#'                             tol = 1e-4, trace = TRUE)
+#' spaco_object <- impact_predict(spaco_object)
+#' @export
 impact_predict <- function(spaco_object) {
   muPhi <- matrix(0, nrow = spaco_object$num_times * spaco_object$num_subjects,
                   ncol = spaco_object$K)
@@ -148,7 +170,35 @@ impact_predict <- function(spaco_object) {
 
 
 
+#' @title Plot for IMPACT Dataset
+#' @description This function plots the observed versus estimated values for
+#' the selected feature.
+#' @param spaco_object A list containing the results of model training. It is
+#' assumed to include elements `num_subjects`, `num_times`, `X`, `OBS`, and
+#' `Xhat`.
+#' @param feature_name Name of the selected feature.
+#' @param imputed_pt Patient data obtained from IMPACT dataset.
+#' @param filtered_feature_idx Indices of filtered features for model training.
+#' @return A plot of the observed versus estimated values.
 #' @importFrom graphics par lines points
+#' @examples
+#' data("impact_imputed")
+#' data("impact_missing")
+#' impact <- impact_data_wrangling(impact_missing, impact_imputed)
+#' spaco_object <- train_prepare(X = impact$X, OBS = impact$OBS, T1 = impact$T1,
+#'                               Z = impact$Z, K = 4, mean_removal = FALSE)
+#' spaco_object <- train_spaco(spaco_object, max_iter = 30, min_iter = 1,
+#'                             tol = 1e-4, trace = TRUE)
+#' spaco_object <- impact_predict(spaco_object)
+#' impact_plot(spaco_object, "TcellsofLivecells",
+#'             impact$imputed_pt, impact$filtered_feature_idx)
+#' impact_plot(spaco_object, "TotalNeutrophilsofLivecells",
+#'             impact$imputed_pt, impact$filtered_feature_idx)
+#' impact_plot(spaco_object, "HLA.DR.ofTotalMono",
+#'             impact$imputed_pt, impact$filtered_feature_idx)
+#' impact_plot(spaco_object, "IL6",
+#'             impact$imputed_pt, impact$filtered_feature_idx)
+#' @export
 impact_plot <- function(spaco_object, feature_name,
                         imputed_pt, filtered_feature_idx) {
   par(pty = "s")

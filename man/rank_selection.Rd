@@ -53,7 +53,8 @@ standard deviation of log-likelihood. Default is 0.}
 data before splitting into batches, it affects the ordering of the indices.
 Default is 2022.}
 
-\item{trace}{Whether to print the model training process. Default is TRUE.}
+\item{trace}{Whether to print the model training process represented by the
+sum of errors in parameter updates. Default is TRUE.}
 }
 \value{
 An integer indicating selected rank.
