@@ -274,7 +274,7 @@ immune_data_wrangling <- function(immune_original) {
 
 
 
-#' @title Prediction for IMPACT Dataset
+#' @title Predict Observations
 #' @description This function evaluates the predictive power of SPACO model
 #' trained on IMPACT dataset. The observation for each subject is predicted by
 #' \deqn{\hat{x}_{itj} =  \sum_{k=1}^K \hat{u}_{ik} \phi_{kt} v_{jk}}
@@ -328,7 +328,7 @@ feature_predict <- function(spaco_object) {
 
 
 
-#' @title Plot for IMPACT Dataset
+#' @title Plot Selected Features
 #' @description This function plots the observed versus estimated values for
 #' the selected feature.
 #' @param spaco_object A list containing the results of model training. It is
