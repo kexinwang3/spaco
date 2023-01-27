@@ -2,7 +2,7 @@
 % Please edit documentation in R/case.R
 \name{feature_predict}
 \alias{feature_predict}
-\title{Prediction for IMPACT Dataset}
+\title{Predict Observations}
 \usage{
 feature_predict(spaco_object)
 }

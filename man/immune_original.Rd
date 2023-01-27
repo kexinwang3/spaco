@@ -3,14 +3,17 @@
 \docType{data}
 \name{immune_original}
 \alias{immune_original}
-\title{immune}
+\title{Original IMMUNE Dataset}
 \description{
-immune
+IMMUNE dataset retrieved from the original source.
 }
 \details{
-\code{time} is the time of the measurement;
-\code{X} acceleration in the "X" direction;
-\code{Y} acceleration in the "Y" direction;
-\code{Z} acceleration in the "Z" direction;
+See \href{https://pubmed.ncbi.nlm.nih.gov/33361110/}{IMMUNE Profiling Study}
+for more information.
+The dataset contains 106 samples of 170 immunological observations collected
+from 45 participants infected with COVID-19. Blood samples of patients were
+collected at enrollment and approximately every 7 days thereafter. The
+ratios of different immune cells in the blood test were measured at these
+time points.
 }
 \keyword{data}

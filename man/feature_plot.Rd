@@ -2,7 +2,7 @@
 % Please edit documentation in R/case.R
 \name{feature_plot}
 \alias{feature_plot}
-\title{Plot for IMPACT Dataset}
+\title{Plot Selected Features}
 \usage{
 feature_plot(spaco_object, selected_feature, columns_feature)
 }
