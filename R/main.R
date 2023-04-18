@@ -308,12 +308,8 @@ beta_fit <- function(Z, mat, vec, beta, intercepts, lambda2,
   beta_error <- sum((beta - beta0)^2)
   beta <- beta1
   intercepts <- intercepts1
-  multi_return <- function() {
-    return_list <- list("beta" = beta, "intercepts" = intercepts,
-                        "lambda2" = lambda2, "beta_error" = beta_error)
-    return(return_list)
-  }
-  beta_list <- multi_return()
+  beta_list <- list("beta" = beta, "intercepts" = intercepts,
+                    "lambda2" = lambda2, "beta_error" = beta_error)
   return(beta_list)
 }
 
@@ -423,12 +419,8 @@ prepare <- function(X, OBS, T1, mean_removal = TRUE, nlam = NULL, lams = NULL,
     B0 <- cv_mean$B0
     R <- R_creator(dim(X)[1], dim(X)[2], dim(X)[3], basis, B0, R)
   }
-  multi_return <- function() {
-    return_list <- list("Omega" = Omega, "h" = h, "R" = R, "B0" = B0,
-                        "cv" = cv, "lams" = lams, "dfs" = dfs)
-    return(return_list)
-  }
-  data_prepare <- multi_return()
+  data_prepare <- list("Omega" = Omega, "h" = h, "R" = R, "B0" = B0,
+                       "cv" = cv, "lams" = lams, "dfs" = dfs)
   return(data_prepare)
 }
 

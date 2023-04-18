@@ -142,7 +142,7 @@ impact_data_wrangling <- function(impact_missing, impact_imputed) {
 #' \item{Z}{A 36 (number of subjects) × 10 (number of covariates) matrix
 #' containing auxiliary covariates.}
 #' \item{columns_feature}{Name of all features.}
-#' @importFrom stats qnorm
+#' @importFrom stats qnorm na.omit
 #' @examples
 #' # IMMUNE
 #' data("immune_original")

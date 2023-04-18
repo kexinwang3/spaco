@@ -18,12 +18,8 @@ tnsr_unfold <- function(tnsr) {
   for (i in 2:dim(tnsr)[2]) {
     tnsr_mode3 <- cbind(tnsr_mode3, t(tnsr[, i, ]))
   }
-  multi_return <- function() {
-    return_list <- list("tnsr_mode1" = tnsr_mode1, "tnsr_mode2" = tnsr_mode2,
-                        "tnsr_mode3" = tnsr_mode3)
-    return(return_list)
-  }
-  mode <- multi_return()
+  mode <- list("tnsr_mode1" = tnsr_mode1, "tnsr_mode2" = tnsr_mode2,
+               "tnsr_mode3" = tnsr_mode3)
   return(mode)
 }
 
@@ -254,12 +250,8 @@ my_cv_glmnet <- function(x, y, nlambda, penalty_factor, nfolds, foldid) {
       }
     }
   }
-  multi_return <- function() {
-    return_list <- list("coefficients" = cv_coefficients, "lambdas" = lambdas,
-                        "cvm" = cvm, "cvsd" = cvsd, "lambda.min" = lambda.min)
-    return(return_list)
-  }
-  cv <- multi_return()
+  cv <- list("coefficients" = cv_coefficients, "lambdas" = lambdas,
+             "cvm" = cvm, "cvsd" = cvsd, "lambda.min" = lambda.min)
   return(cv)
 }
 
@@ -277,11 +269,7 @@ subject_cv_mean <- function(X, Psi, O1, s0, Omega, lams) {
   mean_curve <- mean_curve_update(dim(X)[1], dim(X)[2], dim(X)[3],
                                   lam, Psi, O1, Omega, X)
   B0 <- mean_curve$B0
-  multi_return <- function() {
-    return_list <- list("cv" = cv, "B0" = B0)
-    return(return_list)
-  }
-  cv_mean <- multi_return()
+  cv_mean <- list("cv" = cv, "B0" = B0)
   return(cv_mean)
 }
 
@@ -330,11 +318,7 @@ cut_foldid <- function(n, nfolds, random_state) {
     train_ids[[i]] <- index[[i]][[2]][[1]] + 1
     test_ids[[i]] <- index[[i]][[2]][[2]] + 1
   }
-  multi_return <- function() {
-    data_split <- list("train_ids" = train_ids, "test_ids" = test_ids)
-    return(data_split)
-  }
-  data_split <- multi_return()
+  data_split <- list("train_ids" = train_ids, "test_ids" = test_ids)
   return(data_split)
 }
 
