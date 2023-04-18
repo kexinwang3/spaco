@@ -7,5 +7,5 @@ py <- NULL
   numpy <<- reticulate::import("numpy", delay_load = TRUE)
   tensorly <<- reticulate::import("tensorly", delay_load = TRUE)
   sklearn <<- reticulate::import("sklearn", delay_load = TRUE)
-  pybuiltins <<- reticulate::import_builtins()
+  py <<- reticulate::import_builtins()
 }

@@ -325,7 +325,7 @@ cut_foldid <- function(n, nfolds, random_state) {
   split_id_obj <- k_fold$split(X = subject_ids)
   train_ids <- list()
   test_ids <- list()
-  index <- pybuiltins$list(pybuiltins$enumerate(split_id_obj))
+  index <- py$list(py$enumerate(split_id_obj))
   for (i in seq(1, nfolds)) {
     train_ids[[i]] <- index[[i]][[2]][[1]] + 1
     test_ids[[i]] <- index[[i]][[2]][[2]] + 1
