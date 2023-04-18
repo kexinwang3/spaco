@@ -88,7 +88,7 @@ arma::cube empirical_W_total(int num_times, int num_subjects, int K,
   for (int i = 0; i < num_times; i++) {
     for (int t = 0; t < num_times; t++) {
       for (int j = 0; j < num_subjects; j++) {
-        if (abs(W_total(i, t, j)) < 1e-10) {
+        if (fabs(W_total(i, t, j)) < 1e-10) {
           W_total(i, t, j) = 0.0;
         }
       }
@@ -112,7 +112,7 @@ int pairs_count(int num_times, int num_subjects, arma::cube W_total) {
   }
   for (int s = 0; s < num_times; s++) {
     for (int t = 0; t < num_times; t++) {
-      if (abs(W_count(s, t)) > 0.0) {
+      if (fabs(W_count(s, t)) > 0.0) {
         count++;
       }
     }
@@ -625,7 +625,7 @@ arma::vec penalty_search(int num_times, int nlambda1, int max_iter0,
     maxtmp = max(tmp1) / (min(tmp2) + 1e-6);
     mintmp = 1e-10;
     df0 = dfs(j);
-    while (iter0 < max_iter0 && abs(error0) > tol0) {
+    while (iter0 < max_iter0 && fabs(error0) > tol0) {
       middletmp = (maxtmp + mintmp) / 2;
       invA = inv(A + middletmp * Omega);
       diagAtmp = invA * A;
@@ -775,7 +775,7 @@ double Omega_update(int num_times, int nlambda1, int lambda1_dfmin,
 // [[Rcpp::export]]
 
 double binary_search(int num, double norm_constraint,
-                     arma::vec a, arma::vec b){
+                     arma::vec a, arma::vec b) {
   int max_iter = 1000;
   if (min(a) <= 0) {
     Rcpp::stop("Encountered nonPD input during the subroutine updating V.");
@@ -794,7 +794,7 @@ double binary_search(int num, double norm_constraint,
     lam_min = 0.0;
     lam_max = sqrt(c) / norm_constraint - min(a);
   } else if (norm2_0 < norm_constraint - 1e-8) {
-    lam_min = -(a(idx) - abs(b(idx)) / norm_constraint);
+    lam_min = -(a(idx) - fabs(b(idx)) / norm_constraint);
     lam_max = 0.0;
   } else {
     lam_min = 0.0;
@@ -803,7 +803,7 @@ double binary_search(int num, double norm_constraint,
 
   double lam_current = 0.0;
   int iter = 0;
-  while (iter < max_iter && abs(norm2_0 - norm_constraint) > 1e-8) {
+  while (iter < max_iter && fabs(norm2_0 - norm_constraint) > 1e-8) {
     arma::vec current(num);
     if (norm2_0 > norm_constraint) {
       lam_min = lam_current;
