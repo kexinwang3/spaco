@@ -115,12 +115,8 @@ impact_data_wrangling <- function(impact_missing, impact_imputed) {
   T1 <- sqrt(seq(1, length(T0)) - 1)
   columns_feature <- colnames(imputed_pt[, 25:159])[filtered_feature_idx]
 
-  multi_return <- function() {
-    return_list <- list("X" = X, "OBS" = OBS, "T1" = T1, "Z" = Z,
-                        "columns_feature" = columns_feature)
-    return(return_list)
-  }
-  impact <- multi_return()
+  impact <- list("X" = X, "OBS" = OBS, "T1" = T1, "Z" = Z,
+                 "columns_feature" = columns_feature)
   return(impact)
 }
 
@@ -263,12 +259,8 @@ immune_data_wrangling <- function(immune_original) {
     Z[, i] <- (Z[, i] - mean(Z[, i])) / sqrt((var(Z[, i]) * (Zn - 1) / Zn))
   }
 
-  multi_return <- function() {
-    return_list <- list("X" = X, "OBS" = OBS, "T1" = T1, "Z" = Z,
-                        "columns_feature" = columns_feature)
-    return(return_list)
-  }
-  immune <- multi_return()
+  immune <- list("X" = X, "OBS" = OBS, "T1" = T1, "Z" = Z,
+                 "columns_feature" = columns_feature)
   return(immune)
 }
 
