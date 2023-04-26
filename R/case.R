@@ -376,8 +376,9 @@ feature_plot <- function(spaco_object, selected_feature, columns_feature) {
          xlab = "Estimated", ylab = "Observed", xlim = c(-2, 2),
          ylim = c(-3, 3), cex.lab = 1, cex.main = 1.2, main = selected_feature)
   } else {
-    plot(e0, x0, pch = 20, col = 4, xlim = c(-1, 1), ylim = c(-2, 2),
-              main = selected_feature)
+    plot(e0, x0, pch = 20, col = 4, xlab = "Estimated", ylab = "Observed",
+         xlim = c(-2, 2), ylim = c(-3, 3), cex.lab = 1, cex.main = 1.2,
+         main = selected_feature)
   }
 
   for (i in seq(2, spaco_object$num_subjects)) {
