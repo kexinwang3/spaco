@@ -468,8 +468,10 @@ arma::vec s2_transform(int num_subjects, int num_features,
     for (int j = 1; j < num_features; j++) {
       idx(j) = idx(j - 1) + 1;
     }
+    int sigma_idx = 0;
     for (int t = 0; t < num_features; t++) {
-      s2(idx(t)) = sigma(i);
+      s2(idx(t)) = sigma(sigma_idx);
+      sigma_idx += 1;
     }
   }
   return(s2);
@@ -696,8 +698,8 @@ double Omega_update(int num_times, int nlambda1, int lambda1_dfmin,
   }
   arma::vec dfs(nlambda1);
   dfs = lambda1_dfmin + dfs_tmp * (lambda1_dfmax - 1.0);
-  arma::vec lambda1s(num_times);
-  lambda1s.zeros(num_times);
+  arma::vec lambda1s(nlambda1);
+  lambda1s.zeros(nlambda1);
   lambda1s = penalty_search(num_times, nlambda1, 100, lambda1s, A, Omega, dfs);
   arma::vec ridge(num_times);
   ridge.fill(ridge_traj);
