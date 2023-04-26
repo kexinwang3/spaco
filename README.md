@@ -55,7 +55,7 @@ reticulate::conda_install(envname = "spaco_env",
                           packages = c("numpy", "tensorly", "scikit-learn"))
 ```
 
-You can install the development version of spaco from
+The development version of `spaco` can be installed from
 [GitHub](https://github.com/) with:
 
 ``` r
@@ -65,7 +65,7 @@ devtools::install_github("kexinwang3/spaco")
 
 ## Example
 
-This is an example which shows you how to train SPACO model on `IMPACT`
+This is an example which shows how to train SPACO model on `IMPACT`
 dataset:
 
 - Set up the Conda environment and load the library

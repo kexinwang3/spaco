@@ -54,7 +54,7 @@ reticulate::conda_install(envname = "spaco_env",
                           packages = c("numpy", "tensorly", "scikit-learn"))
 ```
 
-You can install the development version of spaco from [GitHub](https://github.com/) with:
+The development version of `spaco` can be installed from [GitHub](https://github.com/) with:
 
 ``` r
 install.packages("devtools")
@@ -63,18 +63,18 @@ devtools::install_github("kexinwang3/spaco")
 
 ## Example
 
-This is an example which shows you how to train SPACO model on `IMPACT` dataset:
+This is an example which shows how to train SPACO model on `IMPACT` dataset:
 
 - Set up the Conda environment and load the library
 
-```{r}
+```{r set up environment}
 reticulate::use_condaenv("spaco_env", required = TRUE)
 library(spaco)
 ```
 
 - Prepare `IMPACT` dataset
 
-```{r}
+```{r prepare dataset}
 data("impact_imputed")
 data("impact_missing")
 impact <- impact_data_wrangling(impact_missing, impact_imputed)
@@ -82,7 +82,7 @@ impact <- impact_data_wrangling(impact_missing, impact_imputed)
 
 - Perform rank selection
 
-```{r, results = FALSE, message = FALSE, warning = FALSE}
+```{r rank selection, results = FALSE, message = FALSE, warning = FALSE}
 ranks <- c(2:10)
 rank <- rank_selection(X = impact$X, OBS = impact$OBS, T1 = impact$T1,
                        Z = impact$Z, ranks = ranks, early_stop = TRUE)
@@ -90,7 +90,7 @@ rank <- rank_selection(X = impact$X, OBS = impact$OBS, T1 = impact$T1,
 
 - Train SPACO model
 
-```{r, results = FALSE, message = FALSE, warning = FALSE}
+```{r train SPACO model, results = FALSE, message = FALSE, warning = FALSE}
 spaco_object <- train_prepare(X = impact$X, OBS = impact$OBS, T1 = impact$T1,
                               Z = impact$Z, K = rank, mean_removal = FALSE)
 spaco_object <- train_spaco(spaco_object, max_iter = 30, min_iter = 1,
@@ -99,7 +99,7 @@ spaco_object <- train_spaco(spaco_object, max_iter = 30, min_iter = 1,
 
 - Evaluate predictive power
 
-```{r}
+```{r evaluate predictive power}
 spaco_object <- feature_predict(spaco_object)
 ```
 
